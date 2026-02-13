@@ -27,22 +27,57 @@ model Users {
 
 model Account {
   id         Int      @id @default(autoincrement())
-  userId     Int
+  userid     Int
   provider   String
   providerId String
-  user       Users    @relation(fields: [userId], references: [id])
+  user       Users    @relation(fields: [userid], references: [id])
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@unique([provider, providerId])
 }
 
-model Product {
+model Category {
   id        Int      @id @default(autoincrement())
-  userId    Int
-  url       String
-  width     Int
-  height    Int
+  name      String
+  name_ar   String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  user      Users    @relation(fields: [userId], references: [id])
+
+  products Product[]
+}
+
+model Product {
+  id         Int      @id @default(autoincrement())
+  userid     Int
+  categoryid Int
+  url        String
+  width      Int
+  height     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  user         Users         @relation(fields: [userid], references: [id])
+  category     Category      @relation(fields: [categoryid], references: [id])
+  productInfos ProductInfo[]
+}
+
+model Tag {
+  id       Int           @id @default(autoincrement())
+  name     String        @unique
+  name_ar  String        @unique
+  products ProductInfo[]
+}
+
+model ProductInfo {
+  id               Int      @id @default(autoincrement())
+  productid        Int
+  title            String
+  shortDescription String   @db.VarChar(200)
+  description      String   @db.Text
+  likes            Int
+  updatedAt        DateTime @default(now()) @updatedAt
+  createdAt        DateTime @default(now())
+
+  product Product @relation(fields: [productid], references: [id])
+  tags    Tag[]
 }

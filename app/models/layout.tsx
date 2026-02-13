@@ -1,23 +1,26 @@
 import Link from "next/link";
+import prisma from "../_lib/prisma";
 
-export default function ModelsPage({
+export default async function ModelsPage({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>){
+
+    const categories = await prisma.category.findMany();
+    console.log('the categories are ', categories.length);
+
     return(
         <>
-            <section className="grid grid-cols-5 gap-4">
-                <div id="sideNav" className="flex flex-col justify-center gap-2">
-                    <p><Link href="all">ALL</Link></p>
-                    <p><Link href="print">3D PRINTER</Link></p>
-                    <p><Link href="art">ART</Link></p>
-                    <p><Link href="education">EDUCATION</Link></p>
-                    <p><Link href="fashion">FASHION</Link></p>
-                    <p><Link href="hobby">HOBBY & DIY</Link></p>
+            <section className="flex gap-10 p-4">
+                <div id="sideNav" className="flex flex-col justify-center-safe gap-2 w-[20%] ml-10 fixed top-0 h-screen ">
+                    <p><Link href="/models" >All</Link></p>
+                    {categories.map(category => (
+                        <p key={category.id}><Link href={category.name.toLowerCase()}>{category.name}</Link></p>
+                    ))}
                 </div>
 
-                <div>
+                <div className="ml-[25%]">
                     {children}
                 </div>
             </section>

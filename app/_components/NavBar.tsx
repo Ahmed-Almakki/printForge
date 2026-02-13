@@ -2,9 +2,24 @@
 
 import Link from "next/link"
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from "react";
 
 
 export default function NavBar() {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            setIsScrolled(scrollTop > 0);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
 
     const pathname = usePathname()
 
@@ -14,7 +29,7 @@ export default function NavBar() {
     }
     return (<>
         <header>
-        <nav className="absolute top-0 left-0  w-full py-5 flex justify-center ">
+        <nav className="fixed top-0 left-0  w-full py-5 flex justify-center transition-all duration-300 z-50" style={{ backgroundColor: isScrolled ? '#b63a07' : 'transparent' }}>
           <div className="px-6 py-4 min-h-16 max-w-7xl min-w-[90%] flex items-center justify-between">
             <div id="icon">
               <span className="font-bold  text-2xl"><Link href="/">PrintFortage</Link></span>
