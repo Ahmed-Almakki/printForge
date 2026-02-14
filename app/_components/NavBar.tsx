@@ -24,7 +24,7 @@ export default function NavBar() {
     const pathname = usePathname()
 
     const isActive = (path: string) => {
-        console.log('path', path, '/tpathname', pathname)
+
         return path === pathname ? 'text-white border-b-1 pb-2 border-white' : ''
     }
     return (<>

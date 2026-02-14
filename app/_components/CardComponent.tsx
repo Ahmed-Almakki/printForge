@@ -6,7 +6,6 @@ interface cardProps {
 }
 
 export default function cardPage({ product }: cardProps) {
-    console.log('the prodcut is product', product)
     return(
         <>
            <div className="max-w-sm rounded overflow-hidden shadow-lg hover:-translate-y-1.25 hover:cursor-pointer hover:shadow-2xl transition-transform duration-300">

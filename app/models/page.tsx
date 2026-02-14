@@ -7,7 +7,7 @@ const perPage = 8;
 export default async function mainProduct({
   searchParams,
 }: {
-  searchParams?: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }) {
    // Get current page from URL params, default to 1
    const params = await searchParams;

@@ -6,8 +6,6 @@ import { FiFlag } from "react-icons/fi";
 import prisma from "../_lib/prisma";
 
 export default async function aboutPage() {
-    const xx = await prisma.productInfo.findMany({include:{tags:true, product:true}});
-    console.log('the product is ',xx);
     return(
         <>
             <section className="flex justify-evenly w-full py-8 overflow-clip -mt-10 border-b border-[#B45309]">
