@@ -1,3 +1,4 @@
+import fs from 'fs';
 import Image from "next/image"
 import { IoMdHeartEmpty } from "react-icons/io";
 
@@ -6,10 +7,15 @@ interface cardProps {
 }
 
 export default function cardPage({ product }: cardProps) {
+    const imageExists = fs.existsSync(`public/uploads/${product?.product?.url}`);
+    const imgsrc = imageExists ? `/uploads/${product?.product?.url}` : '/defualt.jpg';
+    console.log('image exists', imageExists, 'image src', imgsrc);
     return(
         <>
            <div className="max-w-sm rounded overflow-hidden shadow-lg hover:-translate-y-1.25 hover:cursor-pointer hover:shadow-2xl transition-transform duration-300">
-                <Image className="w-full" src={`/uploads/${product?.product?.url}`} width={product?.product?.width} height={product?.product?.height} alt="Sunset in the mountains" />
+                <Image className="w-full" 
+                src={imgsrc} 
+                width={product?.product?.width} height={product?.product?.height} alt="Sunset in the mountains" />
                 <div className="px-6 py-4 ">
                     <div className="font-bold text-xl mb-2">{product?.title}</div>
                     <p className="text-gray-700 text-base">

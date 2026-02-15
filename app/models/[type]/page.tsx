@@ -31,7 +31,10 @@ export default async function ProductType({
         where: {
             product: {
                 category: {
-                    name: type
+                    name: {
+                        contains: type,
+                        mode: 'insensitive'
+                    }
                 }
             }
         },
@@ -39,7 +42,11 @@ export default async function ProductType({
         take: perPage,
         include: {
             tags: true,
-            product: true
+            product: {
+                include: {
+                    category: true
+                }
+            }
         },
         orderBy: {
             likes: 'asc' // Add ordering for consistency
