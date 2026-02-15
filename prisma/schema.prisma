@@ -47,14 +47,16 @@ model Category {
 }
 
 model Product {
-  id         Int      @id @default(autoincrement())
-  userid     Int
-  categoryid Int
-  url        String
-  width      Int
-  height     Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  id           Int      @id @default(autoincrement())
+  userid       Int
+  categoryid   Int
+  url          String
+  video_url    String?  @db.VarChar(200)
+  threeD_model String   @default("")
+  width        Int
+  height       Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
 
   user         Users         @relation(fields: [userid], references: [id])
   category     Category      @relation(fields: [categoryid], references: [id])
@@ -65,7 +67,7 @@ model Tag {
   id       Int           @id @default(autoincrement())
   name     String        @unique
   name_ar  String        @unique
-  products ProductInfo[]
+  products ProductInfo[] @relation("ProductInfoTags")
 }
 
 model ProductInfo {
@@ -79,5 +81,5 @@ model ProductInfo {
   createdAt        DateTime @default(now())
 
   product Product @relation(fields: [productid], references: [id])
-  tags    Tag[]
+  tags    Tag[]   @relation("ProductInfoTags")
 }

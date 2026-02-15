@@ -1,4 +1,5 @@
 import fs from 'fs';
+import Link from "next/link";
 import Image from "next/image"
 import { IoMdHeartEmpty } from "react-icons/io";
 
@@ -9,9 +10,11 @@ interface cardProps {
 export default function cardPage({ product }: cardProps) {
     const imageExists = fs.existsSync(`public/uploads/${product?.product?.url}`);
     const imgsrc = imageExists ? `/uploads/${product?.product?.url}` : '/defualt.jpg';
-    console.log('image exists', imageExists, 'image src', imgsrc);
+    // console.log('image exists', imageExists, 'image src', imgsrc);
+    console.log('the product is ', product);
     return(
         <>
+        <Link href={`/models/${product?.product?.category?.name.toLowerCase()}/${product?.product?.id}`}>
            <div className="max-w-sm rounded overflow-hidden shadow-lg hover:-translate-y-1.25 hover:cursor-pointer hover:shadow-2xl transition-transform duration-300">
                 <Image className="w-full" 
                 src={imgsrc} 
@@ -32,6 +35,7 @@ export default function cardPage({ product }: cardProps) {
                     ))}
                 </div>
             </div>
+            </Link>
         </>
     )
 }

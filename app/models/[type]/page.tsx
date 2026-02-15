@@ -18,7 +18,10 @@ export default async function ProductType({
         {where: {
             product: {
                 category: {
-                    name: type
+                    name: {
+                        contains: type,
+                        mode: 'insensitive'
+                    }
                 }
             }
         },
@@ -77,5 +80,5 @@ export default async function ProductType({
             }
         </>
     )
-
+ 
 }

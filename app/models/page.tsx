@@ -21,7 +21,11 @@ export default async function mainProduct({
         take: perPage,
         include: {
             tags: true,
-            product: true
+            product: {
+                include: {
+                    category: true
+                }
+            }
         },
         orderBy: {
             id: 'desc' // Add ordering for consistency
