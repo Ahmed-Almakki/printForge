@@ -4,6 +4,8 @@ import { Canvas, useLoader } from "@react-three/fiber"
 import { OrbitControls, Html } from "@react-three/drei"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { Box3, Vector3, Group } from "three"
+import { useMediaQuery } from "react-responsive"
+import { usePathname } from "next/navigation"
 
 interface PathProp {
     path: string
@@ -64,6 +66,9 @@ function MeshComponent({ path }: PathProp) {
 export default function ThreeDModel({ path }: PathProp) {
     // Check if the path matches your specific model
     const isChickenModel = path === "enchanted_crystal_09.glb";
+
+    const isMobile = useMediaQuery({ maxWidth: 768 });
+    const pathname = usePathname();
     
     // Choose background color based on model
     const backgroundColor = isChickenModel 
@@ -99,13 +104,6 @@ export default function ThreeDModel({ path }: PathProp) {
                 <pointLight position={[2, 3, 4]} intensity={1} />
                 <pointLight position={[-2, 1, -3]} intensity={0.8} />
                 
-                {/* Only show debug helpers for non-chicken models */}
-                {!isChickenModel && (
-                    <>
-                        <gridHelper args={[10, 10, 0x888888, 0x444444]} />
-                        <axesHelper args={[3]} />
-                    </>
-                )}
                 
                 <Suspense fallback={<Loader />}>
                     <MeshComponent path={path} />
@@ -115,7 +113,7 @@ export default function ThreeDModel({ path }: PathProp) {
                     enableZoom={true}
                     enablePan={true}
                     enableRotate={true}
-                    autoRotate={true}
+                    autoRotate={pathname === "/" && !isMobile}
                     autoRotateSpeed={1}
                 />
             </Canvas>
