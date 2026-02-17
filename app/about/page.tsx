@@ -3,14 +3,18 @@ import Image from "next/image"
 import { BsStack } from "react-icons/bs";
 import { GoGlobe } from "react-icons/go";
 import { FiFlag } from "react-icons/fi";
-import prisma from "../_lib/prisma";
+import { motion } from "framer-motion";
 
 export default async function aboutPage() {
     return(
         <>
             <section className="flex justify-evenly w-full py-8 overflow-clip -mt-10 border-b border-[#B45309]">
                 <div className="w-[40%] h-auto relative">
-                    <Image width={627} height={627} alt="About Page Image" src={"/image.png"}/>
+                        <div className="relative w-130 h-130 overflow-hidden rounded-full mx-auto">
+                            <div style={{backgroundImage: "url('/f8649aecfe8696cdf22db6f7ca522d3310b95d50.png')",}} className="absolute inset-0 bg-cover bg-center w-full h-full"></div>
+                            <div className="absolute inset-0 bg-amber-500  h-[20%] w-full top-[40%] rotate-45"></div>
+                            <div className="absolute inset-0 bg-amber-500 h-[40%] w-[40%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"></div>
+                        </div>
                 </div>
                 <div className="flex flex-col gap-4 w-[30%] justify-center">
                     <p className="text-2xl font-sans">About printforge</p>

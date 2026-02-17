@@ -51,7 +51,6 @@ model Product {
   userid       Int
   categoryid   Int
   url          String
-  video_url    String?  @db.VarChar(200)
   threeD_model String   @default("")
   width        Int
   height       Int

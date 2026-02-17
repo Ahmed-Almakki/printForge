@@ -1,6 +1,6 @@
 "use client";
 import { motion } from 'framer-motion'
-
+import ThreeDModel from './_components/ThreeDModel';
 
 export default function Home() {
   return (
@@ -16,19 +16,9 @@ export default function Home() {
           </div>
           <button className="pt-2 border-2 p-2">BROWSER MODELS</button>
         </motion.div>
-        <motion.div id="right" className="order-1 md:order-2" initial={{ x: 80, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{
-            duration: 0.95,
-            ease: "easeOut",
-            delay: 0.5,
-          }}>
-          <div className="relative w-130 h-130 overflow-hidden rounded-full mx-auto">
-            <div style={{backgroundImage: "url('/f8649aecfe8696cdf22db6f7ca522d3310b95d50.png')",}} className="absolute inset-0 bg-cover bg-center w-full h-full"></div>
-            <div className="absolute inset-0 bg-amber-500  h-[20%] w-full top-[40%] rotate-45"></div>
-            <div className="absolute inset-0 bg-amber-500 h-[40%] w-[40%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"></div>
-           </div>
-        </motion.div>
+        <div id="right" className="order-1 md:order-2">
+          <ThreeDModel path="enchanted_crystal_09.glb" />
+        </div>
       </div>
     </>
   );
