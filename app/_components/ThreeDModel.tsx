@@ -42,7 +42,7 @@ function MeshComponent({ path }: PathProp) {
             // THIRD: Scale the model to a reasonable size
             const maxDim = Math.max(newSize.x, newSize.y, newSize.z);
             // Target size of 2 units
-            const targetScale = 1 / maxDim * 6;
+            const targetScale = 1 / maxDim * 5;
             gltf.scene.scale.setScalar(targetScale);
             
             // FOURTH: Center the model at origin
@@ -65,7 +65,7 @@ function MeshComponent({ path }: PathProp) {
 
 export default function ThreeDModel({ path }: PathProp) {
     // Check if the path matches your specific model
-    const isChickenModel = path === "enchanted_crystal_09.glb";
+    const isChickenModel = path === "fire_planet.glb";
 
     const isMobile = useMediaQuery({ maxWidth: 768 });
     const pathname = usePathname();
@@ -110,7 +110,7 @@ export default function ThreeDModel({ path }: PathProp) {
                 </Suspense>
                 
                 <OrbitControls 
-                    enableZoom={true}
+                    enableZoom={pathname !== "/"} 
                     enablePan={true}
                     enableRotate={true}
                     autoRotate={pathname === "/" && !isMobile}

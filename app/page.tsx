@@ -1,6 +1,7 @@
 "use client";
 import { motion } from 'framer-motion'
 import ThreeDModel from './_components/ThreeDModel';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -14,10 +15,12 @@ export default function Home() {
             <h1 className="text-6xl font-bold">Discover what’s possible with 3D printing</h1>
             <span className="text-2xl">Join our community of creators and explore a vast library of user-submitted models.</span>
           </div>
-          <button className="pt-2 border-2 p-2">BROWSER MODELS</button>
+          <Link href="/models" className="pt-2 border-2 p-2 border-black">
+            BROWSER MODELS
+          </Link>
         </motion.div>
         <div id="right" className="order-1 md:order-2">
-          <ThreeDModel path="enchanted_crystal_09.glb" />
+          <ThreeDModel path="fire_planet.glb" />
         </div>
       </div>
     </>
