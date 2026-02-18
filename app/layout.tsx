@@ -21,8 +21,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  model,
 }: Readonly<{
   children: React.ReactNode;
+  model?: React.ReactNode;
 }>) {
   return (
     <html lang="en">
@@ -32,6 +34,7 @@ export default function RootLayout({
         <NavBar />
         <main className="text-black mt-50">
           {children}
+          {model}
         </main>
       </body>
     </html>

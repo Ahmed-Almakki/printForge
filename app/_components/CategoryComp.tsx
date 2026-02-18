@@ -29,7 +29,7 @@ export default function CategoryComp({ categories }: CategoryCompProps) {
         // Decode both for comparison
         const decodedPathname = decodeURIComponent(pathname);
         const decodedPath = decodeURIComponent(path);
-        return decodedPathname === decodedPath ? 'text-amber-800 border-b pb-2 border-b-amber-800 ' : '';
+        return decodedPathname === decodedPath ? 'text-amber-800 border-s-2 ps-2 border-s-amber-800 ' : '';
     };
 
     return (

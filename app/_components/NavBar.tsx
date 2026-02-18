@@ -24,8 +24,10 @@ export default function NavBar() {
     const pathname = usePathname()
 
     const isActive = (path: string) => {
-
-        return path === pathname ? 'text-white border-b-1 pb-2 border-white' : ''
+        if (path === '/models') {
+            return pathname?.startsWith('/models') ? 'text-white border-b-1 pb-2 border-white' : '';
+        }
+        return path === pathname ? 'text-white border-b-1 pb-2 border-white' : '';
     }
     return (<>
         <header>

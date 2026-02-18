@@ -10,20 +10,26 @@ export default async function ModelsPage({
   children: React.ReactNode;
 }>){
 
-    const categories = await prisma.category.findMany();
+    try {
 
-    return(
-        <>
-            <section className="flex gap-10 p-4">
-                <div id="sideNav" className="flex flex-col justify-center-safe gap-2 w-[15%] ml-10 fixed top-0 h-screen ">
-                    {
+        const categories = await prisma.category.findMany();
+        
+        return(
+                <>
+                <section className="flex gap-10 p-4">
+                    <div id="sideNav" className="flex flex-col justify-center-safe gap-2 w-[15%] ml-10 fixed top-0 h-screen ">
+                        {
                             <CategoryComp  categories={categories} />
-                    }
-                </div>
-                <div className="ml-[25%] w-full">
-                    {children}
-                </div>
-            </section>
-        </>
-    )
+                        }
+                    </div>
+                    <div className="ml-[25%] w-full">
+                        {children}
+                    </div>
+                </section>
+            </>
+        )
+    }    catch (error) {
+        console.error("Error fetching categories:", error);
+        return <div className="text-center text-red-500">Failed to load categories. Please try again later.</div>;
+    }  
 }

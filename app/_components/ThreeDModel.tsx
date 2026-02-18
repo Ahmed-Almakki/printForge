@@ -73,7 +73,7 @@ export default function ThreeDModel({ path }: PathProp) {
     // Choose background color based on model
     const backgroundColor = isChickenModel 
         ? 'transparent' 
-        : '#e0e0e0'; // Light gray - clean and professional
+        : 'r#87CEEB'; // Light gray - clean and professional
     
     // Alternative color options if you want something else:
     // '#f5f5f5' - off-white

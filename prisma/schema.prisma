@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -14,15 +8,14 @@ datasource db {
 }
 
 model Users {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String    @unique
   password  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  accounts Account[]
-  products Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  accounts  Account[]
+  products  Product[]
 }
 
 model Account {
@@ -30,35 +23,33 @@ model Account {
   userid     Int
   provider   String
   providerId String
-  user       Users    @relation(fields: [userid], references: [id])
   updatedAt  DateTime @default(now()) @updatedAt
+  user       Users    @relation(fields: [userid], references: [id])
 
   @@unique([provider, providerId])
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
   name_ar   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  products Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  products  Product[]
 }
 
 model Product {
-  id           Int      @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   userid       Int
   categoryid   Int
   url          String
-  threeD_model String   @default("")
+  threeD_model String        @default("")
   width        Int
   height       Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-
-  user         Users         @relation(fields: [userid], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
   category     Category      @relation(fields: [categoryid], references: [id])
+  user         Users         @relation(fields: [userid], references: [id])
   productInfos ProductInfo[]
 }
 
@@ -66,7 +57,7 @@ model Tag {
   id       Int           @id @default(autoincrement())
   name     String        @unique
   name_ar  String        @unique
-  products ProductInfo[] @relation("ProductInfoTags")
+  products ProductInfo[] @relation("ProductInfoToTag")
 }
 
 model ProductInfo {
@@ -74,11 +65,10 @@ model ProductInfo {
   productid        Int
   title            String
   shortDescription String   @db.VarChar(200)
-  description      String   @db.Text
+  description      String
   likes            Int
   updatedAt        DateTime @default(now()) @updatedAt
   createdAt        DateTime @default(now())
-
-  product Product @relation(fields: [productid], references: [id])
-  tags    Tag[]   @relation("ProductInfoTags")
+  product          Product  @relation(fields: [productid], references: [id])
+  tags             Tag[]    @relation("ProductInfoToTag")
 }

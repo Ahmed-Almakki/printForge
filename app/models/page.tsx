@@ -10,13 +10,15 @@ export default async function mainProduct({
   searchParams: Promise<{ page?: string }>;
 }) {
    // Get current page from URL params, default to 1
-   const params = await searchParams;
-   const currentPage = Number(params.page) || 1;
-   const skip = (currentPage - 1) * perPage;
+   try {
 
-   const totalItems = await prisma.productInfo.count();
+       const params = await searchParams;
+       const currentPage = Number(params.page) || 1;
+       const skip = (currentPage - 1) * perPage;
+       
+       const totalItems = await prisma.productInfo.count();
 
-    const productinfo = await prisma.productInfo.findMany({
+       const productinfo = await prisma.productInfo.findMany({
         skip: skip,
         take: perPage,
         include: {
@@ -47,8 +49,12 @@ export default async function mainProduct({
                     itemsPerPage={perPage} 
                     totalItems={totalItems} 
                     currentPage={currentPage} 
-                />
+                    />
             </div>
         </>
     )
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        return <div className="text-center text-red-500">Failed to load products. Please try again later.</div>;
+    }
 }
