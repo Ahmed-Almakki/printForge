@@ -69,6 +69,15 @@ model ProductInfo {
   likes            Int
   updatedAt        DateTime @default(now()) @updatedAt
   createdAt        DateTime @default(now())
+  difficulty       String?
+  downloadCount    Int      @default(0)
+  fileSize         String?
+  license          String?
+  material         String?
+  printTime        String?
+  rating           Float    @default(0)
+  reviewCount      Int      @default(0)
+  viewCount        Int      @default(0)
   product          Product  @relation(fields: [productid], references: [id])
   tags             Tag[]    @relation("ProductInfoToTag")
 }

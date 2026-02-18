@@ -1,6 +1,10 @@
 'use client'
 import ThreeDModel from "@/app/_components/ThreeDModel";
-import { BiLike, BiUser, BiTag, BiEnvelope, BiPhone, BiCalendar, BiCategory } from "react-icons/bi";
+import { 
+  BiLike, BiUser, BiTag, BiEnvelope, BiPhone, BiCalendar, BiCategory,
+  BiDownload, BiShow, BiCog, BiTime, BiCube, BiStar
+} from "react-icons/bi";
+import { TbLicense } from "react-icons/tb";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -16,16 +20,57 @@ import { formatDistanceToNow } from 'date-fns';
 export default function DialogComponenet({ product }: { product: any }) {
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
+
+    console.log('the product in dialog component is ', product);
     
     useEffect(() => {
         setMounted(true);
-    }, []);
+    
+        // Track view when dialog opens - but only once per session
+        if (product?.id) {
+            // Check localStorage to prevent double-counting
+            const viewedKey = `viewed_${product.id}`;
+            const hasViewed = sessionStorage.getItem(viewedKey);
+        
+            if (!hasViewed) {
+                fetch(`/api/products/${product.id}/view`, {
+                    method: 'POST'
+                }).catch(console.error);
+            
+                // Mark as viewed in this session
+                sessionStorage.setItem(viewedKey, 'true');
+            }
+        }
+    }, [product]); // Only runs when product changes
     
     if (!mounted) return null;
     
-    // Format date if available
     const createdDate = product?.createdAt ? new Date(product.createdAt) : null;
     const timeAgo = createdDate ? formatDistanceToNow(createdDate, { addSuffix: true }) : '';
+    
+    // Handle download
+    const handleDownload = async () => {
+        if (!product?.id) return;
+        
+        try {
+            // Track download
+            await fetch(`/api/products/${product.id}/download`, {
+                method: 'POST'
+            });
+            
+            // Trigger actual download (you'll need to implement this)
+            // Create a hidden anchor tag for better download control
+            const link = document.createElement('a');
+            link.href = `/threeDmodel/${product.product.threeD_model}`;
+            link.download = product.product.threeD_model.split('/').pop() || 'model.glb'; // Suggests download filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+        } catch (error) {
+            console.error('Download tracking failed:', error);
+        }
+    };
     
     return (
         <Dialog open={true} onOpenChange={() => router.back()}>
@@ -41,19 +86,32 @@ export default function DialogComponenet({ product }: { product: any }) {
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                 }}
             >
-                <div className="flex flex-col h-full">
-                    {/* Header with gradient background */}
-                    <DialogHeader className="p-6 bg-linear-to-r from-amber-500 to-orange-500 text-white">
-                        <DialogTitle className="text-3xl font-bold">{product?.title}</DialogTitle>
-                        <DialogDescription className="text-amber-100 text-lg">
-                            {product?.shortDescription}
-                        </DialogDescription>
+                <div className="flex flex-col h-full overflow-hidden">
+                    {/* Header */}
+                    <DialogHeader className="p-6 bg-linear-to-r from-amber-500 to-orange-500 text-white lex-shrink-0">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <DialogTitle className="text-3xl font-bold">{product?.title}</DialogTitle>
+                                <DialogDescription className="text-amber-100 text-lg">
+                                    {product?.shortDescription}
+                                </DialogDescription>
+                            </div>
+                            
+                            {/* Rating Badge */}
+                            {product?.rating ? (
+                                <div className="flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full">
+                                    <BiStar className="text-yellow-300" />
+                                    <span className="font-bold">{product.rating.toFixed(1)}</span>
+                                    <span className="text-sm">({product.reviewCount || 0})</span>
+                                </div>
+                            ) : null}
+                        </div>
                     </DialogHeader>
                     
-                    {/* Main content area with two columns */}
+                    {/* Main Content */}
                     <div className="flex-1 overflow-y-auto p-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-                            {/* Left column - 3D Model */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Left Column - 3D Model */}
                             <div className="space-y-4">
                                 <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
                                     <span className="w-1 h-6 bg-amber-500 rounded-full"></span>
@@ -62,11 +120,30 @@ export default function DialogComponenet({ product }: { product: any }) {
                                 <div className="bg-white rounded-xl shadow-inner border border-gray-200 overflow-hidden h-100 lg:h-125">
                                     <ThreeDModel path={product?.product?.threeD_model} />
                                 </div>
+                                
+                                {/* Stats Row */}
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+                                        <BiShow className="mx-auto text-amber-500 text-xl" />
+                                        <p className="text-sm text-gray-600">Views</p>
+                                        <p className="font-bold">{product?.viewCount || 0}</p>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+                                        <BiDownload className="mx-auto text-amber-500 text-xl" />
+                                        <p className="text-sm text-gray-600">Downloads</p>
+                                        <p className="font-bold">{product?.downloadCount || 0}</p>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+                                        <BiLike className="mx-auto text-amber-500 text-xl" />
+                                        <p className="text-sm text-gray-600">Likes</p>
+                                        <p className="font-bold">{product?.likes || 0}</p>
+                                    </div>
+                                </div>
                             </div>
                             
-                            {/* Right column - Details */}
+                            {/* Right Column - Details */}
                             <div className="space-y-6 overflow-y-auto pr-2">
-                                {/* Creator Info Card */}
+                                {/* Creator Info */}
                                 {product?.product?.user && (
                                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                                         <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-4">
@@ -105,7 +182,7 @@ export default function DialogComponenet({ product }: { product: any }) {
                                     </div>
                                 )}
                                 
-                                {/* Description Card */}
+                                {/* Description */}
                                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                                     <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-3">
                                         <span className="w-1 h-6 bg-amber-500 rounded-full"></span>
@@ -114,28 +191,71 @@ export default function DialogComponenet({ product }: { product: any }) {
                                     <p className="text-gray-700 leading-relaxed">{product?.description}</p>
                                 </div>
                                 
-                                {/* Stats Grid */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                                        <div className="flex items-center gap-2 text-amber-500 mb-2">
-                                            <BiLike size={24} />
-                                            <span className="text-2xl font-bold text-gray-800">{product?.likes || 0}</span>
-                                        </div>
-                                        <p className="text-sm text-gray-600">Likes</p>
-                                    </div>
-                                    
-                                    {product?.createdAt && (
-                                        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                                            <div className="flex items-center gap-2 text-amber-500 mb-2">
-                                                <BiCalendar size={24} />
-                                                <span className="text-sm font-medium text-gray-800">{timeAgo}</span>
+                                {/* Technical Details Grid */}
+                                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                                    <h3 className="text-xl font-semibold text-gray-800 mb-4">Technical Details</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {product?.difficulty && (
+                                            <div className="flex items-center gap-2">
+                                                <BiCog className="text-amber-500" />
+                                                <div>
+                                                    <p className="text-sm text-gray-600">Difficulty</p>
+                                                    <p className="font-medium">{product.difficulty}</p>
+                                                </div>
                                             </div>
-                                            <p className="text-sm text-gray-600">Posted</p>
+                                        )}
+                                        
+                                        {product?.printTime && (
+                                            <div className="flex items-center gap-2">
+                                                <BiTime className="text-amber-500" />
+                                                <div>
+                                                    <p className="text-sm text-gray-600">Print Time</p>
+                                                    <p className="font-medium">{product.printTime}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {product?.material && (
+                                            <div className="flex items-center gap-2">
+                                                <BiCube className="text-amber-500" />
+                                                <div>
+                                                    <p className="text-sm text-gray-600">Material</p>
+                                                    <p className="font-medium">{product.material}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {product?.fileSize && (
+                                            <div className="flex items-center gap-2">
+                                                <BiDownload className="text-amber-500" />
+                                                <div>
+                                                    <p className="text-sm text-gray-600">File Size</p>
+                                                    <p className="font-medium">{product.fileSize}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {product?.license && (
+                                            <div className="flex items-center gap-2">
+                                                <TbLicense className="text-amber-500" />
+                                                <div>
+                                                    <p className="text-sm text-gray-600">License</p>
+                                                    <p className="font-medium">{product.license}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        <div className="flex items-center gap-2">
+                                            <BiCalendar className="text-amber-500" />
+                                            <div>
+                                                <p className="text-sm text-gray-600">Posted</p>
+                                                <p className="font-medium">{timeAgo}</p>
+                                            </div>
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
                                 
-                                {/* Tags Section */}
+                                {/* Tags */}
                                 {product?.tags && product.tags.length > 0 && (
                                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                                         <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-4">
@@ -155,30 +275,14 @@ export default function DialogComponenet({ product }: { product: any }) {
                                     </div>
                                 )}
                                 
-                                {/* Category & Dimensions */}
-                                {(product?.product?.category || product?.product?.width) && (
-                                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            {product?.product?.category && (
-                                                <div>
-                                                    <p className="text-sm text-gray-600 mb-1">Category</p>
-                                                    <p className="font-semibold text-gray-800 flex items-center gap-1">
-                                                        <BiCategory className="text-amber-500" />
-                                                        {product.product.category.name}
-                                                    </p>
-                                                </div>
-                                            )}
-                                            {product?.product?.width && product?.product?.height && (
-                                                <div>
-                                                    <p className="text-sm text-gray-600 mb-1">Dimensions</p>
-                                                    <p className="font-semibold text-gray-800">
-                                                        {product.product.width} x {product.product.height} px
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
+                                {/* Download Button */}
+                                <button
+                                    onClick={handleDownload}
+                                    className="w-full bg-linear-to-r from-amber-500 to-orange-500 text-white py-4 rounded-xl font-bold text-lg hover:from-amber-600 hover:to-orange-600 transition-all transform hover:scale-[1.02] shadow-lg flex items-center justify-center gap-2"
+                                >
+                                    <BiDownload size={24} />
+                                    Download Model
+                                </button>
                             </div>
                         </div>
                     </div>
